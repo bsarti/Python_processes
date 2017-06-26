@@ -23,7 +23,7 @@ import sys
 
 n_x_lim = 5e9 #regulation parameter for computing performance based on the product of the
 #number of processes by the disk space
-red_fact = 10 #elementary reduction factor of the disk space considered for the calculation
+red_fact = 10 #elementary reduction factor of the disk space
 
 def main():
     ''' Main. You have to choose your option: stdin or .data file'''
@@ -44,7 +44,7 @@ def calculate_from_stdin():
         data.append(datatxt_integers)
     for i in xrange(len(data)):
         x_disk = data[i][0] #assigning the disk space
-        dp_i = data[i][1:] #assigning he time used by the processes to consume 1 byte
+        dp_i = data[i][1:] #assigning the time used by the processes to consume 1 byte
         ETA(x_disk, dp_i)
 
 def calculate_from_file(filename):
@@ -70,17 +70,16 @@ def ETA(x_disk, dp_i):
     x_red = x_disk #creating a reduced disk space that will be used for the calculation
     x_redf = 1.0 #creating a disk space reduction factor
     #adapting the reduction factor in relation to the product
-    #of the disk space by the number of processes
+    #of the disk space by the number of processes:
     while (lendp*x_disk)/x_redf >= n_x_lim:
         x_redf = x_redf * red_fact
     x_red = x_disk / x_redf #assigning the convenient disk space reduction factor
     dp_count = [i for i in dp_i] #copying the time used by the processes to consume 1 byte
-    # while there is some space in the disk
-    while x_red > 0:
+    while x_red > 0: # while there is some space in the disk:
         min_dp_count = min(dp_count) #minimum time to consume 1 byte among the processes
         dp_count = [i - min_dp_count for i in dp_count] #substracting this minimum time
         b_used = 0 # disk space used in bytes
-        #calculating the disk space used during this minimum time (can be >1)
+        #calculating the disk space used during this minimum time (can be >1 s)
         for i in xrange(lendp):
             if dp_count[i] == 0:
                 b_used += 1
